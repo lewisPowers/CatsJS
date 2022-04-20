@@ -46,33 +46,26 @@ function catPawMove(YPos) {
   }, 1450)
 }
 
-function catSwipe(element, delay) {
+function catSwipe(element, delay = 2000) {
   let paw = catPawEl;
   let elPos = element.getBoundingClientRect().y;
   combineSounds(delay - 500);
-  catPawMove(elPos)
-  element.parentElement.style.overflow = 'hidden';
+  catPawMove(elPos);
   setTimeout(function() {
     element.style.display = 'none';
-    element.parentElement.style.overflow = 'auto';
   }, delay);
   element.classList.add('slide');
 }
 // END CAT PAW
 
-
 let ulEl = document.getElementsByTagName('UL')[0];
 let testSwipeEl = document.getElementById('test-swipe');
-// let onScreenEls = document.getElementsByClassName('on-screen');
 
 catDivEl.append(imgEl);
 mainDivEl.append(audioEl);
 mainDivEl.append(catDivEl);
-// append cat-paw to maindiv? or body?
 mainDivEl.append(catPawEl);
 document.body.append(mainDivEl);
-// document.body.append(mainDivEl, catPawEl);
-
 
 let catDiv = document.getElementById('cat-div');
 let catPic = document.getElementById('cat-pic');
@@ -83,8 +76,6 @@ let sfxPath = 'assets/sfx/';
 
 let catPicPaths = ['kitten-scream-peek.png', 'cat.png', 'cat-glasses-removebg-preview.png', 'kitten-wink.png', 'cat-peeking.png']
 let audioPaths = ['meow.mp3', 'kitty-meow.wav', 'loud-meow.mp3', 'little-cat-attention-meow.wav']
-
-
 
 function setPath(element, attribute, relPath, finalPath) {
   element.setAttribute( attribute, relPath + finalPath )
@@ -130,7 +121,6 @@ function cycleCatClasses() {
   if (addedClass !== '') catDiv.classList.add(addedClass);
 }
 
-
 function createElement(type, className, id) {
   let el = document.createElement(type);
   if (id) el.id = id || '';
@@ -138,64 +128,12 @@ function createElement(type, className, id) {
   return el;
 }
 
-// let observer2 = new IntersectionObserver(function(entries) {
-
-//   entries.forEach(function(entry) {
-//     // console.log(entry.target)
-//     entry.target.classList.toggle('on-screen', entry.isIntersecting)
-//     if (entry.target.threshold < 1) entry.target.classList.remove('on-screen')
-
-//   })
-
-// }, {
-//   threshold: 1
-//   // rootMargin: '-10px'
-// });
-
-// let ulChildren = Array.from(ulEl.children)
-// ulChildren.forEach(function(child) {
-//   observer2.observe(child)
-// });
-
-// // random interval between 30seconds and 2 minutes
-// function getSeconds() {
-//   return Math.floor( (Math.random() * 90) + 30) * 1000;
-// }
-// // Cat Swipe
-// setInterval(function() {
-//   console.log('interval function initiated')
-//   let onScreenEls = document.getElementsByClassName('on-screen');
-//   let randomIdx = Math.floor(Math.random() * onScreenEls.length);
-//   let el = onScreenEls[randomIdx];
-//   if (el !== undefined && el.classList.contains('on-screen')) catSwipe(el, 2000);
-// }, 7000);
-
 let eventlisteners = function() {
   // keep catDiv over viewport
   document.addEventListener('scroll', function(e) {
     let pixels = window.scrollY;
     mainDivEl.style.top = `${pixels}px`;
   })
-}
-
-// elementIsInView(testSwipeEl);
-eventlisteners();
-
-let testInterval = 6000;
-let interval = twoMinutesOrLess() * tenPlusRandomSeconds() * 1000;
-function init() {
-  catPopup();
-  removeClassDelay(catPic, 'show', REMOVE_CLASS_DELAY);
-  setInterval(function() {
-    cycleCatClasses();
-  }, testInterval)
-
-}
-function tenPlusRandomSeconds() {
-  return Math.floor( (Math.random() * 50) + 10 );
-}
-function twoMinutesOrLess() {
-  return Math.floor(Math.random() * 2);
 }
 
 let observer = new IntersectionObserver(function(entries) {
@@ -213,6 +151,23 @@ ulChildren.forEach(function(child) {
   observer.observe(child)
 });
 
+eventlisteners();
+
+let testInterval = 6000;
+// random interval between 10seconds and 30seconds
+function randomSeconds() {
+  return Math.floor( (Math.random() * 20) + 10) * 1000;
+}
+
+function init() {
+  catPopup();
+  removeClassDelay(catPic, 'show', REMOVE_CLASS_DELAY);
+  setInterval(function() {
+    cycleCatClasses();
+  }, randomSeconds())
+
+}
+
 setInterval(function() {
   let number = getRandomNum(100)
   if (number < 75) {
@@ -228,7 +183,7 @@ setInterval(function() {
     }
   }
 
-}, testInterval);
+}, randomSeconds());
 $(window).ready(() => {
   init();
 })
@@ -243,17 +198,6 @@ $(window).ready(() => {
  *   BELOW IS  RANDOM CRAPOLA
  *
  *
- * // function elementIsInView(element) {
-//   // If element is in full view, it can be 'selected' by the 'cat'
-//   // Intersection Observer
-//   let options = {
-//     root: element,
-//     rootMargin: '50px',
-//     threshold: 1.0
-//   }
-//   let scrollTop = window.addEventListener('scroll', function(e) {
-
-//   })
 //   let callback = (entries, observer) => {
 
 //     entries.forEach(entry => {
