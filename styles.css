@@ -20,8 +20,13 @@ li {
   line-height: 2rem;
 }
 
+.hide {
+  opacity: 0;
+}
+
 .slide {
   animation: slide 1s forwards;
+  animation-delay: 1.5s;
 }
 
 @keyframes slide {
@@ -64,6 +69,12 @@ li {
   bottom: 0;
 }
 
+/* #cat-paw {
+  height: 50px;
+  width: 400px;
+  background-color: rgba(0, 0, 0, 0.484);
+} */
+
 #cat-pic {
   position:absolute;
   bottom: 0;
@@ -94,5 +105,50 @@ li {
   }
   to {
     transform: translateY(100%);
+  }
+}
+
+/* CAT PAW */
+.cat-paw,
+#cat-paw {
+  position:absolute;
+}
+.cat-paw {
+  width: 100vw;
+  height: 100vh;
+}
+
+#cat-paw {
+  height: 100px;
+  width: 400px;
+  right: 0;
+  transform: translateX(100%);
+}
+
+#cat-paw.show {
+  opacity: 1;
+  animation: slidein 1.5s ease-in-out;
+}
+
+#cat-paw.retract {
+  opacity: 1;
+  animation: slideout 400ms ease-in-out;
+}
+
+@keyframes slidein {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(5%);
+  }
+}
+
+@keyframes slideout {
+  from {
+    transform: translateX(5%);
+  }
+  to {
+    transform: translateX(100%);
   }
 }

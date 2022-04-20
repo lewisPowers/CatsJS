@@ -1,7 +1,64 @@
+const MEOW_DELAY = 400;
+const REMOVE_CLASS_DELAY = .699
+const RATIO = 20;
+
 let mainDivEl = createElement('div', 'cat-main', '');
 let catDivEl = createElement('div', 'cat', 'cat-div');
 let audioEl = createElement('audio', '', 'cat-sound');
 let imgEl = createElement('img', '', 'cat-pic');
+let catPawEl = createElement('img', 'cat-paw', 'cat-paw');
+
+
+// CAT PAW
+let purrAud = createElement('audio', 'purr', '');
+let meowAud = createElement('audio', 'meow', '');
+catPawEl.setAttribute('src', 'paw.png')
+catPawEl.classList.add('hide');
+setTimeout(function() {
+  catPawEl.classList.remove('hide');
+}, 4000)
+purrAud.setAttribute('src', 'purr.wav')
+meowAud.setAttribute('src', 'meow.mp3')
+
+function playPurr() {
+  purrAud.play();
+}
+
+function playMeow() {
+  meowAud.play();
+}
+
+function combineSounds(delay) {
+  playPurr();
+  setTimeout(function() {
+    purrAud.pause();
+    meowAud.play();
+  }, delay)
+}
+function catPawMove(YPos) {
+  let paw = catPawEl;
+  paw.style.top = `${YPos}px`;
+  paw.classList.remove('retract');
+  paw.classList.add('show');
+  setTimeout(function() {
+    paw.classList.remove('show');
+    paw.classList.add('retract');
+  }, 1450)
+}
+
+function catSwipe(element, delay) {
+  let paw = catPawEl;
+  let elPos = element.getBoundingClientRect().y;
+  combineSounds(delay - 500);
+  catPawMove(elPos)
+  element.parentElement.style.overflow = 'hidden';
+  setTimeout(function() {
+    element.style.display = 'none';
+    element.parentElement.style.overflow = 'auto';
+  }, delay);
+  element.classList.add('slide');
+}
+// END CAT PAW
 
 
 let ulEl = document.getElementsByTagName('UL')[0];
@@ -11,7 +68,10 @@ let testSwipeEl = document.getElementById('test-swipe');
 catDivEl.append(imgEl);
 mainDivEl.append(audioEl);
 mainDivEl.append(catDivEl);
+// append cat-paw to maindiv? or body?
+mainDivEl.append(catPawEl);
 document.body.append(mainDivEl);
+// document.body.append(mainDivEl, catPawEl);
 
 
 let catDiv = document.getElementById('cat-div');
@@ -36,7 +96,7 @@ function meow() {
   setPath(catSound, 'src', sfxPath, audioPaths[randomIdx]);
   setTimeout(function() {
     meow.play();
-  }, 400)
+  }, MEOW_DELAY)
 }
 
 function catPopup() {
@@ -46,22 +106,17 @@ function catPopup() {
   meow();
 }
 
-function catSwipe(element, delay) {
-  element.parentElement.style.overflow = 'hidden';
-  setTimeout(function() {
-    element.style.display = 'none';
-    element.parentElement.style.overflow = 'auto';
-  }, delay);
-  element.classList.add('slide');
-}
-
 function removeClassDelay(el, className, seconds) {
   setTimeout(function() {
     el.classList.remove(className);
   }, seconds * 1000)
 }
 
-let rotationClasses = ['', '', '', '', 'top', 'right-top', 'left', 'right', '', '', '', '', '', '', '', '' ];
+let rotationClasses = ['top', 'right-top', 'left', 'right'];
+
+for (let i = 0; i < RATIO; i++) {
+  rotationClasses.push('');
+}
 
 function getRandomNum(length) {
   return Math.floor(Math.random() * length);
@@ -83,63 +138,112 @@ function createElement(type, className, id) {
   return el;
 }
 
-let observer2 = new IntersectionObserver(function(entries) {
+// let observer2 = new IntersectionObserver(function(entries) {
 
+//   entries.forEach(function(entry) {
+//     // console.log(entry.target)
+//     entry.target.classList.toggle('on-screen', entry.isIntersecting)
+//     if (entry.target.threshold < 1) entry.target.classList.remove('on-screen')
+
+//   })
+
+// }, {
+//   threshold: 1
+//   // rootMargin: '-10px'
+// });
+
+// let ulChildren = Array.from(ulEl.children)
+// ulChildren.forEach(function(child) {
+//   observer2.observe(child)
+// });
+
+// // random interval between 30seconds and 2 minutes
+// function getSeconds() {
+//   return Math.floor( (Math.random() * 90) + 30) * 1000;
+// }
+// // Cat Swipe
+// setInterval(function() {
+//   console.log('interval function initiated')
+//   let onScreenEls = document.getElementsByClassName('on-screen');
+//   let randomIdx = Math.floor(Math.random() * onScreenEls.length);
+//   let el = onScreenEls[randomIdx];
+//   if (el !== undefined && el.classList.contains('on-screen')) catSwipe(el, 2000);
+// }, 7000);
+
+let eventlisteners = function() {
+  // keep catDiv over viewport
+  document.addEventListener('scroll', function(e) {
+    let pixels = window.scrollY;
+    mainDivEl.style.top = `${pixels}px`;
+  })
+}
+
+// elementIsInView(testSwipeEl);
+eventlisteners();
+
+let testInterval = 6000;
+let interval = twoMinutesOrLess() * tenPlusRandomSeconds() * 1000;
+function init() {
+  catPopup();
+  removeClassDelay(catPic, 'show', REMOVE_CLASS_DELAY);
+  setInterval(function() {
+    cycleCatClasses();
+  }, testInterval)
+
+}
+function tenPlusRandomSeconds() {
+  return Math.floor( (Math.random() * 50) + 10 );
+}
+function twoMinutesOrLess() {
+  return Math.floor(Math.random() * 2);
+}
+
+let observer = new IntersectionObserver(function(entries) {
   entries.forEach(function(entry) {
-    // console.log(entry.target)
     entry.target.classList.toggle('on-screen', entry.isIntersecting)
     if (entry.target.threshold < 1) entry.target.classList.remove('on-screen')
-    // let onScreenEls = document.getElementsByClassName('on-screen');
-    // console.log(onScreenEls)
-
-    // let scrollY = entry.screenY;
-    // setInterval(function() {
-    //   if (!entry.target.classList.contains('on-screen')) {
-    //     clearTimeout()
-    //   }
-    //   setTimeout(function() {
-    //     if (entry.target.classList.contains('on-screen')) {
-          // let onScreenEls = document.getElementsByClassName('on-screen');
-          // let randomIdx = Math.floor(Math.random() * onScreenEls.length);
-          // catSwipe(onScreenEls[randomIdx], 2000)
-    //     }
-    //   }, 10)
-
-    // }, 10000)
   })
-
-
-
-  // catSwipe(onScreenEls[randomIdx], 5000)
-
 }, {
   threshold: 1
   // rootMargin: '-10px'
-})
-// observer2.observe(testSwipeEl);
-// observer2.observe(ulEl);
-let ulChildren = Array.from(ulEl.children)
+});
+
+let ulChildren = Array.from(ulEl.children);
 ulChildren.forEach(function(child) {
-  observer2.observe(child)
+  observer.observe(child)
+});
+
+setInterval(function() {
+  let number = getRandomNum(100)
+  if (number < 75) {
+    catPopup();
+    removeClassDelay(catPic, 'show', REMOVE_CLASS_DELAY);
+  } else {
+    let onScreenEls = document.getElementsByClassName('on-screen');
+    if (!onScreenEls.length) return;
+    let randomIdx = Math.floor(Math.random() * onScreenEls.length);
+    let el = onScreenEls[randomIdx];
+    if (el !== undefined && el.classList.contains('on-screen')) {
+      catSwipe(el, 2000);
+    }
+  }
+
+}, testInterval);
+$(window).ready(() => {
+  init();
 })
 
-
-// random interval between 30seconds and 2 minutes
-function getSeconds() {
-  return Math.floor( (Math.random() * 90) + 30) * 1000;
-}
-// Cat Swipe
-setInterval(function() {
-  console.log('interval function initiated')
-  let onScreenEls = document.getElementsByClassName('on-screen');
-  let randomIdx = Math.floor(Math.random() * onScreenEls.length);
-  let el = onScreenEls[randomIdx];
-  if (el !== undefined && el.classList.contains('on-screen')) catSwipe(el, 2000);
-}, 7000);
-
-
-
-// function elementIsInView(element) {
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *   BELOW IS  RANDOM CRAPOLA
+ *
+ *
+ * // function elementIsInView(element) {
 //   // If element is in full view, it can be 'selected' by the 'cat'
 //   // Intersection Observer
 //   let options = {
@@ -258,40 +362,8 @@ var visible_begins = [];
 // },reading_check_delay*1000);  // End interval
 
 
-
-
-
-let eventlisteners = function() {
-  // keep catDiv over viewport
-  document.addEventListener('scroll', function(e) {
-    let pixels = window.scrollY;
-    mainDivEl.style.top = `${pixels}px`;
-  })
-}
-
-// elementIsInView(testSwipeEl);
-eventlisteners();
-
-let testInterval = 6000;
-let interval = twoMinutesOrLess() * tenPlusRandomSeconds() * 1000;
-function init() {
-  catPopup();
-  removeClassDelay(catPic, 'show', .699);
-  setInterval(function() {
-    cycleCatClasses();
-  }, testInterval)
-
-}
-function tenPlusRandomSeconds() {
-  return Math.floor( (Math.random() * 50) + 10 );
-}
-function twoMinutesOrLess() {
-  return Math.floor(Math.random() * 2);
-}
-setInterval(function() {
-  catPopup();
-  removeClassDelay(catPic, 'show', .699);
-}, testInterval);
-$(window).ready(() => {
-  init();
-})
+ *
+ *
+ *
+ *     END RANDOM CRAPOLA
+ */
